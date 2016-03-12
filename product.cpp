@@ -4,19 +4,39 @@
 #include <string>
 #include <cstdlib>
 
-extern sf::RectangleShape backGround;
-extern double carbondioxideM, ethanolM, waterM, monosaccharideM, disaccharideM;
-extern double monosaccharidegL, disaccharidegL, carbondioxidegL, ethanolgL, watergL;
-std::string instream;
-extern sf::Sprite screenS;
-double startMass, finalMass, volumeB;
-void load();
-void save();
 std::string n2s(double);
-
 
 void Product::calculate()
 {
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+
+
 	carbonDMol = (startMass - finalMass) / carbondioxideM; carbonDMass = carbonDMol * carbondioxideM; carbonDVolume = carbonDMass / carbondioxidegL;
 	ethanolMol = carbonDMol; ethanolMass = ethanolMol * ethanolM; ethanolVolume = ethanolMass / ethanolgL;
 	ABV = (ethanolVolume / volumeB) * 100;
@@ -32,8 +52,42 @@ void Product::calculate()
 	EPL_.setString("EPL: " + n2s(EPL));
 }
 
-Product::Product()
+Product::Product(sf::RenderWindow &window, sf::Font &font, Comchan &comchan, sf::RectangleShape &backGround)
+:
+	window(window),
+	font(font),
+	comchan(comchan),
+	backGround(backGround)
 {
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+
+
 	input.setFont(font); mol.setFont(font); mass.setFont(font); volume.setFont(font); misc.setFont(font); startMass_.setFont(font); finalMass_.setFont(font); volumeB_.setFont(font);
 	carbonDMol_.setFont(font); carbonDMass_.setFont(font); carbonDVolume_.setFont(font); ethanolMol_.setFont(font); ethanolMass_.setFont(font); ethanolVolume_.setFont(font);
 	ABV_.setFont(font); EPL_.setFont(font);
@@ -61,6 +115,34 @@ Product::Product()
 }
 
 int Product::enter() {
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+
 	begin:
 	sf::Event event;
 	if (window.waitEvent(event))
@@ -316,8 +398,9 @@ int Product::enter() {
 
 						sf::Image screen = window.capture();
 						sf::Texture screenT; screenT.loadFromImage(screen);
+						sf::Sprite screenS;
 						screenS.setTexture(screenT);
-						load();
+						// load();
 					}
 
 						break;
@@ -358,8 +441,9 @@ int Product::enter() {
 
 						sf::Image screen = window.capture();
 						sf::Texture screenT; screenT.loadFromImage(screen);
+						sf::Sprite screenS;
 						screenS.setTexture(screenT);
-						save();
+						// save();
 					}
 						break;
 					default: break;

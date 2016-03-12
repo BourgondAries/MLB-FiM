@@ -4,6 +4,7 @@
 #include "about.hpp"
 #include "economy.hpp"
 #include "recipe.hpp"
+#include "product.hpp"
 const char * auth = "Gemaakt door de Nederlander Kevin Robert Stravers (1994, september, 25), volmaakt op de negende van oktober, 2012, gedurende 5 dagen";
 
 typedef const std::size_t usize;
@@ -55,6 +56,7 @@ int main() {
 	About about(window, font);
 	Economy economy(window, font, communicator);
 	Recipe recipe(window, font, communicator, backGround);
+	Product product(window, font, communicator, backGround);
 
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");
 	backys.setTexture(backy); bannys.setTexture(banny);
@@ -116,7 +118,7 @@ int main() {
 										return 0;
 									break;
 								case 1:
-									// if (product() == 1)
+									if (product.enter() == 1)
 										return 0;
 									break;
 								case 2:

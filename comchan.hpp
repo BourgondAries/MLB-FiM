@@ -14,6 +14,7 @@ struct Comchan {
 
 	double ethanolEoC, sucroseEoC;
 	double enthalpyC;
+	double startMass, finalMass, volumeB;
 
 
 	double volumeToAdd;

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "comchan.hpp"
 
 class Product {
 	char selection = (char) 0;
@@ -28,8 +29,12 @@ class Product {
 
 	sf::Texture backGroundT, bannerT;
 	sf::Sprite backGroundS, bannerS;
+	sf::RenderWindow &window;
+	sf::Font &font;
+	Comchan &comchan;
+	sf::RectangleShape &backGround;
 public:
-	Product();
+	Product(sf::RenderWindow &window, sf::Font &font, Comchan &comchan, sf::RectangleShape &backGround);
 	void calculate();
 	int enter();
 };
