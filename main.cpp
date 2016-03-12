@@ -1,54 +1,31 @@
 #include <SFML/Graphics.hpp>
 #include <cstdio>
 #include "icon.hpp"
+#include "about.hpp"
+#include "economy.hpp"
 const char * auth = "Gemaakt door de Nederlander Kevin Robert Stravers (1994, september, 25), volmaakt op de negende van oktober, 2012, gedurende 5 dagen";
-
-/// GLOBALS
-sf::Event event;
-sf::Font font;
-sf::RenderWindow *window;
-sf::Sprite screenS;
-
-///FUNCTION DECLARATIONS
-int recipe();
-void initializer();
-
-int product();
-void initializeProduct();
-
-int economy();
-void initializeEconomy();
-
-int load();
-void initializeLoad();
-void createList();
-
-int save();
-void initSave();
-
-int about();
-void initAbout();
-
-extern sf::RectangleShape backGround;
-///CPP-LOCALS
 
 typedef const std::size_t usize;
 
-int main()
-{
+int main() {
+	sf::RectangleShape backGround;
+	sf::Event event;
+	sf::Font font;
+	sf::RenderWindow window;
+	sf::Sprite screenS;
+
+	Comchan communicator;
+
 	char selection = (char)0;
 	usize menu_item_count = 7;
 	sf::Text menu[menu_item_count];
 	sf::Texture backy, banny;
 	sf::Sprite backys, bannys;
 	font.loadFromFile("visitor1.ttf");
-	initializeEconomy();
-	initializer();
-	initializeProduct();
-	initializeLoad();
-	createList();
-	initSave();
-	initAbout();
+
+	About about(window, font);
+	Economy economy(window, font, communicator);
+
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");
 	backys.setTexture(backy); bannys.setTexture(banny);
 	bannys.setPosition(200,0);
@@ -65,20 +42,20 @@ int main()
 		menu[i].setPosition(sf::Vector2f(800 / 2. - (int)menu[i].getGlobalBounds().width / 2, menu[i-1].getPosition().y + 20));
 	}
 	menu[0].setColor(sf::Color(255,255,255));
-	window->setFramerateLimit(30);
-	window->create(sf::VideoMode(800,600,32), "My Little Brew : Fermentation is Magic", sf::Style::Default);
-	window->clear();
-	window->draw(backys);
-	window->draw(backGround);
+	window.setFramerateLimit(30);
+	window.create(sf::VideoMode(800,600,32), "My Little Brew : Fermentation is Magic", sf::Style::Default);
+	window.clear();
+	window.draw(backys);
+	window.draw(backGround);
 	for (int i = 0; i < menu_item_count; i++)
-		window->draw(menu[i]);
-	window->draw(bannys);
-	window->display();
-	window->setIcon(beer.width, beer.height, beer.pixel_data);
-	while (window->isOpen())
+		window.draw(menu[i]);
+	window.draw(bannys);
+	window.display();
+	window.setIcon(beer.width, beer.height, beer.pixel_data);
+	while (window.isOpen())
 	{
 		invalid:
-		if (window->waitEvent(event))
+		if (window.waitEvent(event))
 		{
 			switch (event.type)
 			{
@@ -105,125 +82,125 @@ int main()
 							switch ((int)selection)
 							{
 								case 0:
-									if (recipe() == 1)
+									// if (recipe() == 1)
 										return 0;
 									break;
 								case 1:
-									if (product() == 1)
+									// if (product() == 1)
 										return 0;
 									break;
 								case 2:
-									if (economy() == 1)
+									if (economy.enter(backGround) == 1)
 										return 0;
 									break;
 								case 3:
 									{
-										window->clear();
-										window->draw(backys);
-										window->draw(backGround);
+										window.clear();
+										window.draw(backys);
+										window.draw(backGround);
 										for (int i = 0; i < menu_item_count; i++)
-											window->draw(menu[i]);
-										window->draw(bannys);
-										window->display();
+											window.draw(menu[i]);
+										window.draw(bannys);
+										window.display();
 
-										sf::Image screen = window->capture();
+										sf::Image screen = window.capture();
 										sf::Texture screenT; screenT.loadFromImage(screen);
 										screenS.setTexture(screenT);
-										if (load() == 1)
+										// if (load() == 1)
 											return 0;
 									}
 									break;
 								case 4:
 									{
-										window->clear();
-										window->draw(backys);
-										window->draw(backGround);
+										window.clear();
+										window.draw(backys);
+										window.draw(backGround);
 										for (int i = 0; i < menu_item_count; i++)
-											window->draw(menu[i]);
-										window->draw(bannys);
-										window->display();
+											window.draw(menu[i]);
+										window.draw(bannys);
+										window.display();
 
-										sf::Image screen = window->capture();
+										sf::Image screen = window.capture();
 										sf::Texture screenT; screenT.loadFromImage(screen);
 										screenS.setTexture(screenT);
-										if (save() == 1)
+										// if (save() == 1)
 											return 0;
 									}
 									break;
 								case 6:
-									window->close();
+									window.close();
 									return 0;
 									break;
 								default:
 								{
-									window->clear();
-									window->draw(backys);
-									window->draw(backGround);
+									window.clear();
+									window.draw(backys);
+									window.draw(backGround);
 									for (int i = 0; i < menu_item_count; i++)
-										window->draw(menu[i]);
-									window->draw(bannys);
-									window->display();
+										window.draw(menu[i]);
+									window.draw(bannys);
+									window.display();
 
-									sf::Image screen = window->capture();
+									sf::Image screen = window.capture();
 									sf::Texture screenT; screenT.loadFromImage(screen);
 									screenS.setTexture(screenT);
-									if (about() == 1)
+									if (about.enter(screenS) == 1)
 										return 0;
 								}
 									break;
 							}
 							break;
 						case sf::Keyboard::Escape:
-							window->close();
+							window.close();
 							return 0;
 						case sf::Keyboard::L:
 						{
-							window->clear();
-							window->draw(backys);
-							window->draw(backGround);
+							window.clear();
+							window.draw(backys);
+							window.draw(backGround);
 							for (int i = 0; i < menu_item_count; i++)
-								window->draw(menu[i]);
-							window->draw(bannys);
-							window->display();
+								window.draw(menu[i]);
+							window.draw(bannys);
+							window.display();
 
-							sf::Image screen = window->capture();
+							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
 							screenS.setTexture(screenT);
-							load();
+							// load();
 						}
 							break;
 						case sf::Keyboard::S:
 						{
-							window->clear();
-							window->draw(backys);
-							window->draw(backGround);
+							window.clear();
+							window.draw(backys);
+							window.draw(backGround);
 							for (int i = 0; i < menu_item_count; i++)
-								window->draw(menu[i]);
-							window->draw(bannys);
-							window->display();
+								window.draw(menu[i]);
+							window.draw(bannys);
+							window.display();
 
-							sf::Image screen = window->capture();
+							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
 							screenS.setTexture(screenT);
-							save();
+							// save();
 						}
 							break;
 						default: ;
 					}
 					break;
 				case sf::Event::Closed:
-					window->close();
+					window.close();
 					return 0;
 				default: goto invalid;
 			}
 		}
-		window->clear();
-		window->draw(backys);
-		window->draw(backGround);
+		window.clear();
+		window.draw(backys);
+		window.draw(backGround);
 		for (int i = 0; i < menu_item_count; i++)
-			window->draw(menu[i]);
-		window->draw(bannys);
-		window->display();
+			window.draw(menu[i]);
+		window.draw(bannys);
+		window.display();
 	}
 	return 0;
 }

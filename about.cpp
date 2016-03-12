@@ -55,7 +55,7 @@ int About::enter(sf::Sprite &screenS) {
 	window.draw(thanks);
 	window.draw(progry);
 	for (int i = 0; i < 6; ++i)
-		window.draw(logo2[0]);
+		window.draw(logo2[i]);
 	window.draw(linev);
 	window.draw(lineh);
 
