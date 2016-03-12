@@ -3,6 +3,7 @@
 #include "icon.hpp"
 #include "about.hpp"
 #include "save.hpp"
+#include "load.hpp"
 #include "economy.hpp"
 #include "recipe.hpp"
 #include "product.hpp"
@@ -35,7 +36,7 @@ void initComchanMolars(Comchan &comchan) {
 	comchan.disaccharidegL = 1590;
 	comchan.monosaccharidegL = 1540;
 
-	comchan.lastLoaded = 0;
+	comchan.lastLoaded = -1;
 	comchan.currentElement = 0;
 }
 
@@ -61,6 +62,7 @@ int main() {
 	Recipe recipe(window, font, communicator, backGround);
 	Product product(window, font, communicator, backGround);
 	Save save(window, font, communicator);
+	Load load(window, font, communicator);
 
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");
 	backys.setTexture(backy); bannys.setTexture(banny);
@@ -142,7 +144,7 @@ int main() {
 										sf::Image screen = window.capture();
 										sf::Texture screenT; screenT.loadFromImage(screen);
 										screenS.setTexture(screenT);
-										// if (load() == 1)
+										if (load.enter(screenS) == 1)
 											return 0;
 									}
 									break;
@@ -202,7 +204,7 @@ int main() {
 							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
 							screenS.setTexture(screenT);
-							// load();
+							load.enter(screenS);
 						}
 							break;
 						case sf::Keyboard::S:
@@ -218,7 +220,7 @@ int main() {
 							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
 							screenS.setTexture(screenT);
-							// save();
+							save.enter(screenS);
 						}
 							break;
 						default: ;

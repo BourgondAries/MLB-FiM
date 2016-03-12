@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "globals.hpp"
+#include "load.hpp"
 #include <fstream>
 #include <ctime>
 #include <utility>
@@ -8,32 +9,35 @@
 #include <cstdio>
 
 std::string n2s(double);
-int lastLoaded = -1;
 
-extern double totalVolume, totalDiSugarPerLitre, juiceVolume, juiceMonoSugarPerLitre, juiceDiSugarPerLitre, timeSpan;
-extern double startMass, finalMass, volumeB;
-extern double yeastP, sucroseP, juiceP, waterP, yeastPL,
-			yeastMass, sucroseMass, juiceLitre, waterLitre;
-extern double monosaccharidegL, disaccharidegL, carbondioxidegL, ethanolgL, watergL;
-extern double hydrogenM, carbonM, oxygenM;
-extern std::string name;
-extern double carbondioxideM, ethanolM, waterM,
-				monosaccharideM, disaccharideM;
-double molarMass(int,int,int);
-extern sf::Sprite screenS;
-
-extern double enthalpyC, ethanolEoC, sucroseEoC;
-
-void compute2();
-void calculate();
-void compute();
-
-//This will be an overlay-screen, where a snapshot of the menu is taken, and this screen comes on top?
-
-std::pair<std::vector<sf::Text>, std::vector<sf::Text>> createList(sf::Font &font)
+void Load::updateTimer()
 {
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
+		unsigned int currentTime = (unsigned int) std::time(NULL);
+		for (unsigned int i = 1; i <= timeTable.size(); i++)
+		{
+			int timez = (int)timeTable[i-1] - (int)currentTime;
+			if (timez <= 0)
+			{
+				timeList[i].setColor(sf::Color::Red);
+				timeList[i].setString("Finished!");
+				continue;
+			}
+			unsigned int weeks = ((int)timez) / 604800; unsigned int days = ((int)timez - weeks * 604800) / 86400; unsigned int hours = ((int)timez - weeks * 604800 - days * 86400) / 3600; unsigned int minutes = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600) / 60; unsigned int seconds = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600 - minutes * 60);
+			std::string timeLeft = n2s(weeks) + " W " + n2s(days) + " d " + n2s(hours) + " h " + n2s(minutes) + " m " + n2s(seconds) + " s";
+			timeList[i].setString(timeLeft);
+		}
+}
+
+void Load::createList() {
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
+	auto &currentElement = comchan.currentElement;
+	auto &lastLoaded = comchan.lastLoaded;
 	std::fstream loadList;
-	std::vector<sf::Text> list, timeList;
 	loadList.open("loadList.txt");
 	char temp;
 	bool commaFound = false;
@@ -91,26 +95,60 @@ std::pair<std::vector<sf::Text>, std::vector<sf::Text>> createList(sf::Font &fon
 		list[lastLoaded].setColor(sf::Color::Cyan);
 }
 
-void Load::updateTimer()
+Load::Load(sf::RenderWindow &window, sf::Font &font, Comchan &comchan)
+:
+	window(window),
+	font(font),
+	comchan(comchan)
 {
-		unsigned int currentTime = (unsigned int) std::time(NULL);
-		for (unsigned int i = 1; i <= timeTable.size(); i++)
-		{
-			int timez = (int)timeTable[i-1] - (int)currentTime;
-			if (timez <= 0)
-			{
-				timeList[i].setColor(sf::Color::Red);
-				timeList[i].setString("Finished!");
-				continue;
-			}
-			unsigned int weeks = ((int)timez) / 604800; unsigned int days = ((int)timez - weeks * 604800) / 86400; unsigned int hours = ((int)timez - weeks * 604800 - days * 86400) / 3600; unsigned int minutes = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600) / 60; unsigned int seconds = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600 - minutes * 60);
-			std::string timeLeft = n2s(weeks) + " W " + n2s(days) + " d " + n2s(hours) + " h " + n2s(minutes) + " m " + n2s(seconds) + " s";
-			timeList[i].setString(timeLeft);
-		}
-}
+	createList();
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+	auto &name = comchan.name;
+	auto &lastLoaded = comchan.lastLoaded;
+	auto &sucroseEoC = comchan.sucroseEoC;
+	auto &ethanolEoC = comchan.ethanolEoC;
+	auto &oxygenM = comchan.oxygenM;
+	auto &carbonM = comchan.carbonM;
+	auto &hydrogenM = comchan.hydrogenM;
+	auto &waterLitre = comchan.waterLitre;
+	auto &juiceLitre = comchan.juiceLitre;
+	auto &sucroseMass = comchan.sucroseMass;
+	auto &yeastMass = comchan.yeastMass;
+	auto &waterP = comchan.waterP;
+	auto &juiceP = comchan.juiceP;
+	auto &sucroseP = comchan.sucroseP;
+	auto &yeastP = comchan.yeastP;
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
 
-Load::Load()
-{
+
 		overlay1.create(300,450); overlay2.create(300,450);
 		overlay1.clear(sf::Color(0,127,0,200)); overlay2.clear(sf::Color(0,127,0,200));
 		overlay1.display(); overlay2.display();
@@ -172,16 +210,57 @@ Load::Load()
 		/*case 27: */sucroseEoC = std::atof(numberHolder.c_str());
 		actual.close();
 
-		enthalpyC = 1000 * sucroseEoC -  1000 * ethanolEoC * 4;
-		carbondioxideM = molarMass(0,1,2); ethanolM = molarMass(6,2,1); waterM = molarMass(2,0,1);
-		monosaccharideM = molarMass(12,6,6); disaccharideM = molarMass(22,12,11);
-		compute2();
-		calculate();
-		compute();
 }
 
-int Load::enter()
+int Load::enter(sf::Sprite &screenS)
 {
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+	auto &name = comchan.name;
+	auto &lastLoaded = comchan.lastLoaded;
+	auto &sucroseEoC = comchan.sucroseEoC;
+	auto &ethanolEoC = comchan.ethanolEoC;
+	auto &oxygenM = comchan.oxygenM;
+	auto &carbonM = comchan.carbonM;
+	auto &hydrogenM = comchan.hydrogenM;
+	auto &waterLitre = comchan.waterLitre;
+	auto &juiceLitre = comchan.juiceLitre;
+	auto &sucroseMass = comchan.sucroseMass;
+	auto &yeastMass = comchan.yeastMass;
+	auto &waterP = comchan.waterP;
+	auto &juiceP = comchan.juiceP;
+	auto &sucroseP = comchan.sucroseP;
+	auto &yeastP = comchan.yeastP;
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
+
+
 		createList();
 		overlay1.clear(sf::Color(0,127,0,200));
 		while (list.size() > currentElement)
@@ -201,6 +280,7 @@ int Load::enter()
 		overlay2.display();
 		currentElement = 0;
 		sf::Clock timer;
+		sf::Event event;
 		begin:
 		while (window.pollEvent(event))
 		{
@@ -308,12 +388,6 @@ int Load::enter()
 								overlay1.display();
 								currentElement = 0;
 							}
-							enthalpyC = 1000 * sucroseEoC -  1000 * ethanolEoC * 4;
-							carbondioxideM = molarMass(0,1,2); ethanolM = molarMass(6,2,1); waterM = molarMass(2,0,1);
-							monosaccharideM = molarMass(12,6,6); disaccharideM = molarMass(22,12,11);
-							compute2();
-							calculate();
-							compute();
 							break;
 						case sf::Keyboard::Delete:
 						{

@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <fstream>
+#include "comchan.hpp"
 
 class Load {
 	std::vector<sf::Text> timeList;
@@ -10,10 +12,14 @@ class Load {
 	std::vector<double> timeTable;
 	unsigned int currentElement = 0;
 	unsigned int selection = 1;
+	sf::RenderWindow &window;
+	sf::Font &font;
+	Comchan &comchan;
+	std::fstream loadList;
 public:
 
 	void createList();
 	void updateTimer();
-	Load();
-	int enter();
+	Load(sf::RenderWindow &window, sf::Font &font, Comchan &comchan);
+	int enter(sf::Sprite &screenS);
 };
