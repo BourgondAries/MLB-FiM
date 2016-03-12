@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <cstdio>
+#include <iostream>
 #include "icon.hpp"
 #include "about.hpp"
 #include "save.hpp"
@@ -62,6 +63,7 @@ int main() {
 	Recipe recipe(window, font, communicator, backGround);
 	Product product(window, font, communicator, backGround);
 	Save save(window, font, communicator);
+	std::cout << "Before loop: " << communicator.sucroseEoC << std::endl;
 	Load load(window, font, communicator);
 
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");

@@ -6,9 +6,6 @@ class Recipe {
 	bool enterN = false, hasPer = false;
 	//Constants:
 	const double posDeviation = 140.;
-	//Input variables (6):
-	//Output variables (many):
-	//Sugar
 	double
 	monosaccharideMol, monosaccharideMass, monosaccharideVolume,
 	disaccharideMol, disaccharideMass, disaccharideVolume,

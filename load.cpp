@@ -163,54 +163,51 @@ Load::Load(sf::RenderWindow &window, sf::Font &font, Comchan &comchan)
 
 
 ///Load Standard stuff
-		std::fstream actual("standard.txt");
-		unsigned int termCounter = 0;
-		std::string numberHolder;
-		while (actual.good())
+	std::fstream actual("standard.txt");
+	unsigned int termCounter = 0;
+	std::string numberHolder;
+	while (actual.good())
+	{
+		char temp = actual.get();
+		if ((temp >= 48 && temp <= 57) || temp == 46)
+			numberHolder.push_back(temp);
+		else if (temp == 10)
 		{
-			char temp = actual.get();
-			if ((temp >= 48 && temp <= 57) || temp == 46)
-				numberHolder.push_back(temp);
-			else if (temp == 10)
+			switch (termCounter)
 			{
-				switch (termCounter)
-				{
-					case 0: totalVolume = std::atof(numberHolder.c_str()); break;
-					case 1: totalDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
-					case 2: juiceVolume = std::atof(numberHolder.c_str()); break;
-					case 3: juiceMonoSugarPerLitre = std::atof(numberHolder.c_str()); break;
-					case 4: juiceDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
-					case 5: startMass = std::atof(numberHolder.c_str()); break;
-					case 6: finalMass = std::atof(numberHolder.c_str()); break;
-					case 7: volumeB = std::atof(numberHolder.c_str()); break;
-					case 8: yeastP = std::atof(numberHolder.c_str()); break;
-					case 9: sucroseP = std::atof(numberHolder.c_str()); break;
-					case 10: juiceP = std::atof(numberHolder.c_str()); break;
-					case 11: waterP = std::atof(numberHolder.c_str()); break;
-					case 12: yeastMass = std::atof(numberHolder.c_str()); break;
-					case 13: sucroseMass = std::atof(numberHolder.c_str()); break;
-					case 14: juiceLitre = std::atof(numberHolder.c_str()); break;
-					case 15: waterLitre = std::atof(numberHolder.c_str()); break;
-					case 16: timeSpan = std::atof(numberHolder.c_str()); break;
-					case 17: monosaccharidegL = std::atof(numberHolder.c_str()); break;
-					case 18: disaccharidegL = std::atof(numberHolder.c_str()); break;
-					case 19: carbondioxidegL = std::atof(numberHolder.c_str()); break;
-					case 20: ethanolgL = std::atof(numberHolder.c_str()); break;
-					case 21: watergL = std::atof(numberHolder.c_str()); break;
-					case 22: hydrogenM = std::atof(numberHolder.c_str()); break;
-					case 23: carbonM = std::atof(numberHolder.c_str()); break;
-					case 24: oxygenM = std::atof(numberHolder.c_str()); break;
-					case 25: yeastPL = std::atof(numberHolder.c_str()); break;
-					case 26: ethanolEoC = std::atof(numberHolder.c_str()); break;
-					case 27: sucroseEoC = std::atof(numberHolder.c_str()); break;
-				}
-				termCounter++;
-				numberHolder.clear();
+				case 0: totalVolume = std::atof(numberHolder.c_str()); break;
+				case 1: totalDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
+				case 2: juiceVolume = std::atof(numberHolder.c_str()); break;
+				case 3: juiceMonoSugarPerLitre = std::atof(numberHolder.c_str()); break;
+				case 4: juiceDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
+				case 5: startMass = std::atof(numberHolder.c_str()); break;
+				case 6: finalMass = std::atof(numberHolder.c_str()); break;
+				case 7: volumeB = std::atof(numberHolder.c_str()); break;
+				case 8: yeastP = std::atof(numberHolder.c_str()); break;
+				case 9: sucroseP = std::atof(numberHolder.c_str()); break;
+				case 10: juiceP = std::atof(numberHolder.c_str()); break;
+				case 11: waterP = std::atof(numberHolder.c_str()); break;
+				case 12: yeastMass = std::atof(numberHolder.c_str()); break;
+				case 13: sucroseMass = std::atof(numberHolder.c_str()); break;
+				case 14: juiceLitre = std::atof(numberHolder.c_str()); break;
+				case 15: waterLitre = std::atof(numberHolder.c_str()); break;
+				case 16: timeSpan = std::atof(numberHolder.c_str()); break;
+				case 17: monosaccharidegL = std::atof(numberHolder.c_str()); break;
+				case 18: disaccharidegL = std::atof(numberHolder.c_str()); break;
+				case 19: carbondioxidegL = std::atof(numberHolder.c_str()); break;
+				case 20: ethanolgL = std::atof(numberHolder.c_str()); break;
+				case 21: watergL = std::atof(numberHolder.c_str()); break;
+				case 22: hydrogenM = std::atof(numberHolder.c_str()); break;
+				case 23: carbonM = std::atof(numberHolder.c_str()); break;
+				case 24: oxygenM = std::atof(numberHolder.c_str()); break;
+				case 25: yeastPL = std::atof(numberHolder.c_str()); break;
+				case 26: ethanolEoC = std::atof(numberHolder.c_str()); break;
+				case 27: sucroseEoC = std::atof(numberHolder.c_str()); break;
 			}
+			termCounter++;
+			numberHolder.clear();
 		}
-		/*case 27: */sucroseEoC = std::atof(numberHolder.c_str());
-		actual.close();
-
+	}
 }
 
 int Load::enter(sf::Sprite &screenS)
@@ -333,7 +330,6 @@ int Load::enter(sf::Sprite &screenS)
 								name = temporary; name.erase(name.size() - 1); name.erase(name.size() - 1); name.erase(name.size() - 1); name.erase(name.size() - 1);
 								temporary = "save/" + temporary;
 								std::fstream actual(temporary.c_str());
-								std::cout << "trying to open " << temporary << std::endl;
 								unsigned int termCounter = 0;
 								std::string numberHolder;
 								while (actual.good())
@@ -346,7 +342,6 @@ int Load::enter(sf::Sprite &screenS)
 										switch (termCounter)
 										{
 											case 0: totalVolume = std::atof(numberHolder.c_str());
-												std::cout << "Set total vol" << std::endl;
 											break;
 											case 1: totalDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
 											case 2: juiceVolume = std::atof(numberHolder.c_str()); break;

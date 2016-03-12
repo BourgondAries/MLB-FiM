@@ -9,7 +9,6 @@ class Load {
 	sf::RenderTexture overlay1, overlay2;
 	sf::Sprite overlayS1, overlayS2;
 	sf::RectangleShape marker, toppy;
-	std::vector<double> timeTable;
 	unsigned int currentElement = 0;
 	unsigned int selection = 1;
 	sf::RenderWindow &window;

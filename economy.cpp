@@ -2,6 +2,7 @@
 #include "globals.hpp"
 #include <string>
 #include <cstdio>
+#include <iostream>
 #include "economy.hpp"
 
 std::string n2s(double);
