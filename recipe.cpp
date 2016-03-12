@@ -1,32 +1,21 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "globals.hpp"
-
-sf::RectangleShape backGround;
+#include "recipe.hpp"
 
 std::string n2s(double);
 
-void load();
-void save();
-
-extern double yeastPG, sucrosePG, juicePL, waterPL, yeastPL;
-extern sf::Sprite screenS;
-double carbondioxideM = molarMass(0,1,2), ethanolM = molarMass(6,2,1), waterM = molarMass(2,0,1),
-				monosaccharideM = molarMass(12,6,6), disaccharideM = molarMass(22,12,11);
-double monosaccharidegL, disaccharidegL, carbondioxidegL, ethanolgL, watergL;
-extern std::string instream;
-extern double enthalpyC;
-double hydrogenM, carbonM, oxygenM;
-
-double totalVolume, totalDiSugarPerLitre, juiceVolume, juiceMonoSugarPerLitre, juiceDiSugarPerLitre, timeSpan;
-
-
 double Recipe::molarMass(int H, int C, int O)
 {
-	return (H * hydrogenM + C * carbonM + O * oxygenM);
+	return (H * comchan.hydrogenM + C * comchan.carbonM + O * comchan.oxygenM);
 }
 
-Recipe::Recipe()
+Recipe::Recipe(sf::RenderWindow &window, sf::Font &font, Comchan &comchan, sf::RectangleShape &backGround)
+:
+	window(window),
+	font(font),
+	comchan(comchan),
+	backGround(backGround)
 {
 	input.setString(std::string("Input - Litres & Grams")); mol.setString(std::string("Mol")); mass.setString(std::string("Mass")); volume.setString(std::string("Volume")); misc.setString(std::string("Misc.")); info.setString(std::string("\n\nPress 'esc' to return.\n\nTotal Volume: pre-fermenting volume\nDesired DPL: Desired Disaccharides (gram) per Litre\nJuice Volume: Volume of the added juice\n - MPL: Juice Monosaccharides Per Litre content\n - DPL: Juice Disaccharides Per Litre content\nTimeSpan: Fermentation Time\n\nJD Equivalent: Juice Disaccharide Equivalent Per Litre\nEABV: Expected Alcohol By Volume\nEPL: Ethanol (gram) Per Litre\nYTA: Yeast (gram) to add\n\nHold shift whilst changing time to change days.\nYou can type values."));
 
@@ -108,6 +97,29 @@ Recipe::Recipe()
 
 void Recipe::compute()
 {
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
 	//Misc. first because other functions may use them. Checked
 	volumeToAdd = totalVolume - juiceVolume;
 	volumeToAdd = (volumeToAdd>0.09 || volumeToAdd<-0.09)?volumeToAdd:0.0;
@@ -203,9 +215,35 @@ void Recipe::compute()
 	YTA_.setString("YTA: " + n2s(YTA));
 }
 
-int Recipe::recipe()
+int Recipe::enter()
 {
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+
 	begin:
+	sf::Event event;
 	if (window.waitEvent(event))
 	{
 		switch (event.type)
@@ -562,8 +600,9 @@ int Recipe::recipe()
 
 							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
+							sf::Sprite screenS;
 							screenS.setTexture(screenT);
-							load();
+							// load();
 						}
 						break;
 					case sf::Keyboard::S:
@@ -619,8 +658,9 @@ int Recipe::recipe()
 
 							sf::Image screen = window.capture();
 							sf::Texture screenT; screenT.loadFromImage(screen);
+							sf::Sprite screenS;
 							screenS.setTexture(screenT);
-							save();
+							// save();
 						}
 						break;
 					default: break;

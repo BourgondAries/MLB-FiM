@@ -1,3 +1,4 @@
+#pragma once
 struct Comchan {
 
 	std::string instream;
@@ -9,7 +10,12 @@ struct Comchan {
 	double yeastP, sucroseP, juiceP, waterP,
 			yeastMass, sucroseMass, juiceLitre, waterLitre;
 
-	double ethanolEoC, sucroseEoC;
-	double enthalpyC = 1000 * sucroseEoC - 1000 * ethanolEoC * 4;
+	double totalVolume, totalDiSugarPerLitre, juiceVolume, juiceMonoSugarPerLitre, juiceDiSugarPerLitre, timeSpan;
 
+	double ethanolEoC, sucroseEoC;
+	double enthalpyC;
+
+
+	double volumeToAdd;
 };
+

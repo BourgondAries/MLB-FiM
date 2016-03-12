@@ -3,9 +3,37 @@
 #include "icon.hpp"
 #include "about.hpp"
 #include "economy.hpp"
+#include "recipe.hpp"
 const char * auth = "Gemaakt door de Nederlander Kevin Robert Stravers (1994, september, 25), volmaakt op de negende van oktober, 2012, gedurende 5 dagen";
 
 typedef const std::size_t usize;
+
+double molarMass(int h, int c, int o, Comchan &comchan) {
+	return h * comchan.hydrogenM + c * comchan.carbonM +
+		o * comchan.oxygenM;
+}
+
+void initComchanMolars(Comchan &comchan) {
+	comchan.carbonM = 12.0107;
+	comchan.hydrogenM = 1.008;
+	comchan.oxygenM = 15.9994;
+	comchan.carbondioxideM = molarMass(0,1,2, comchan);
+	comchan.ethanolM = molarMass(6,2,1, comchan);
+	comchan.waterM = molarMass(2,0,1, comchan);
+	comchan.monosaccharideM = molarMass(12,6,6, comchan);
+	comchan.disaccharideM = molarMass(22,12,11, comchan);
+
+	comchan.ethanolEoC = 1058000;
+	comchan.sucroseEoC = 5648000;
+	comchan.enthalpyC = comchan.sucroseEoC - comchan.ethanolEoC*4;
+
+	comchan.watergL = 1000;
+	comchan.ethanolgL = 789;
+	comchan.carbondioxidegL = 1.98;
+	comchan.disaccharidegL = 1590;
+	comchan.monosaccharidegL = 1540;
+
+}
 
 int main() {
 	sf::RectangleShape backGround;
@@ -15,6 +43,7 @@ int main() {
 	sf::Sprite screenS;
 
 	Comchan communicator;
+	initComchanMolars(communicator);
 
 	char selection = (char)0;
 	usize menu_item_count = 7;
@@ -25,6 +54,7 @@ int main() {
 
 	About about(window, font);
 	Economy economy(window, font, communicator);
+	Recipe recipe(window, font, communicator, backGround);
 
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");
 	backys.setTexture(backy); bannys.setTexture(banny);
@@ -82,7 +112,7 @@ int main() {
 							switch ((int)selection)
 							{
 								case 0:
-									// if (recipe() == 1)
+									if (recipe.enter() == 1)
 										return 0;
 									break;
 								case 1:
