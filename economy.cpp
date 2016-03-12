@@ -12,7 +12,7 @@ double Economy::molarMass(int H, int C, int O)
 	return (H * comchan.hydrogenM + C * comchan.carbonM + O * comchan.oxygenM);
 }
 
-void Economy::compute2()
+void Economy::compute()
 {
 	comchan.yeastPG = comchan.yeastP / comchan.yeastMass;
 	comchan.sucrosePG = comchan.sucroseP / comchan.sucroseMass;
@@ -80,7 +80,7 @@ Economy::Economy(sf::RenderWindow &window, sf::Font &font, Comchan &comchan)
 	monosaccharidegL_.setColor(sf::Color(127,127,127)); disaccharidegL_.setColor(sf::Color(127,127,127)); carbondioxidegL_.setColor(sf::Color(127,127,127)); ethanolgL_.setColor(sf::Color(127,127,127)); watergL_.setColor(sf::Color(127,127,127));
 	ethanolEoC_.setColor(sf::Color(127,127,127)); sucroseEoC_.setColor(sf::Color(127,127,127));
 
-	compute2();
+	compute();
 
 	atomicM_.setString("Atomic Mass");
 	densities.setString("Density");
@@ -228,7 +228,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								break;
 							default: break;
 						}
-						compute2();
+						compute();
 						if (enterN)
 							instream.clear();
 						enterN = false;
@@ -334,7 +334,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								break;
 							default: break;
 						}
-						compute2();
+						compute();
 						if (enterN)
 							instream.clear();
 						enterN = false;
@@ -401,7 +401,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								comchan.sucroseEoC -= 0.01;
 								break;
 						}
-						compute2();
+						compute();
 						if (enterN)
 							instream.clear();
 						enterN = false;
@@ -468,7 +468,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								sucroseEoC += 0.01;
 								break;
 						}
-						compute2();
+						compute();
 						if (enterN)
 							instream.clear();
 						enterN = false;
@@ -527,7 +527,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								case 18: sucroseEoC = std::atof(instream.c_str()); break;
 								default: break;
 							}
-							compute2();
+							compute();
 						}
 					}
 						break;
@@ -566,7 +566,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 							case 18: sucroseEoC = std::atof(instream.c_str()); break;
 							default: break;
 						}
-						compute2();
+						compute();
 					}
 					break;
 					case sf::Keyboard::Period:
@@ -600,7 +600,7 @@ int Economy::enter(sf::RectangleShape &backGround)
 								case 18: sucroseEoC = 0; break;
 								default: break;
 							}
-							compute2();
+							compute();
 							enterN = true;
 							switch ((int)selection)
 							{
@@ -681,13 +681,13 @@ int Economy::enter(sf::RectangleShape &backGround)
 								case 18: sucroseEoC = 0; break;
 								default: break;
 							}
-							compute2();
+							compute();
 							enterN = true;
 							hasPer = false;
 					}
 					break;
 					case sf::Keyboard::Return:
-					compute2();
+					compute();
 					if (enterN)
 						instream.clear();
 					enterN = false;

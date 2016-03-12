@@ -28,7 +28,7 @@ class Economy {
 public:
 
 	Economy(sf::RenderWindow &window, sf::Font &font, Comchan &comchan);
-	void compute2();
+	void compute();
 	int enter(sf::RectangleShape &backGround);
 	double molarMass(int,int,int);
 };
