@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstdio>
+#include <iostream>
 
 std::string n2s(double);
 
@@ -295,7 +296,7 @@ int Load::enter(sf::Sprite &screenS)
 							timeTable.clear();
 							return 0;
 							break;
-						case sf::Keyboard::Up:
+						case sf::Keyboard::Up: case sf::Keyboard::I:
 							if (selection > 1)
 							{
 								marker.move(0,-10);
@@ -308,7 +309,7 @@ int Load::enter(sf::Sprite &screenS)
 								marker.setPosition(100,selection * 10 + 77);
 							}
 							break;
-						case sf::Keyboard::Down:
+						case sf::Keyboard::Down: case sf::Keyboard::K:
 							if (selection < list.size() - 2)
 							{
 								marker.move(0,10);
@@ -332,6 +333,7 @@ int Load::enter(sf::Sprite &screenS)
 								name = temporary; name.erase(name.size() - 1); name.erase(name.size() - 1); name.erase(name.size() - 1); name.erase(name.size() - 1);
 								temporary = "save/" + temporary;
 								std::fstream actual(temporary.c_str());
+								std::cout << "trying to open " << temporary << std::endl;
 								unsigned int termCounter = 0;
 								std::string numberHolder;
 								while (actual.good())
@@ -343,7 +345,9 @@ int Load::enter(sf::Sprite &screenS)
 									{
 										switch (termCounter)
 										{
-											case 0: totalVolume = std::atof(numberHolder.c_str()); break;
+											case 0: totalVolume = std::atof(numberHolder.c_str());
+												std::cout << "Set total vol" << std::endl;
+											break;
 											case 1: totalDiSugarPerLitre = std::atof(numberHolder.c_str()); break;
 											case 2: juiceVolume = std::atof(numberHolder.c_str()); break;
 											case 3: juiceMonoSugarPerLitre = std::atof(numberHolder.c_str()); break;

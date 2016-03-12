@@ -100,7 +100,7 @@ int main() {
 				case sf::Event::KeyPressed:
 					switch (event.key.code)
 					{
-						case sf::Keyboard::Up:
+						case sf::Keyboard::Up: case sf::Keyboard::I:
 							menu[(int)selection].setColor(sf::Color(127,127,127));
 							if (selection == (char) 0)
 								selection = (char) 6;
@@ -108,7 +108,7 @@ int main() {
 								selection--;
 							menu[(int)selection].setColor(sf::Color(255,255,255));
 							break;
-						case sf::Keyboard::Down:
+						case sf::Keyboard::Down: case sf::Keyboard::K:
 							menu[(int)selection].setColor(sf::Color(127,127,127));
 							if (selection == (char) 6)
 								selection = (char) 0;

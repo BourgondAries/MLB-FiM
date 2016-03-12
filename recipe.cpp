@@ -217,6 +217,7 @@ void Recipe::compute()
 
 int Recipe::enter()
 {
+	compute();
 	auto &volumeToAdd = comchan.volumeToAdd;
 	auto &totalVolume = comchan.totalVolume;
 	auto &juiceVolume = comchan.juiceVolume;
@@ -251,7 +252,7 @@ int Recipe::enter()
 			case sf::Event::KeyPressed:
 				switch (event.key.code)
 				{
-					case sf::Keyboard::Up:
+					case sf::Keyboard::Up: case sf::Keyboard::I:
 						switch ((int)selection)
 						{
 							case 0:
@@ -292,7 +293,7 @@ int Recipe::enter()
 						enterN = false;
 						hasPer = false;
 						break;
-					case sf::Keyboard::Down:
+					case sf::Keyboard::Down: case sf::Keyboard::K:
 						switch ((int)selection)
 						{
 							case 0:
@@ -333,7 +334,7 @@ int Recipe::enter()
 						enterN = false;
 						hasPer = false;
 						break;
-					case sf::Keyboard::Left:
+					case sf::Keyboard::Left: case sf::Keyboard::J:
 						switch ((int)selection)
 						{
 							case 0:
@@ -387,7 +388,7 @@ int Recipe::enter()
 						hasPer = false;
 						compute();
 						break;
-					case sf::Keyboard::Right:
+					case sf::Keyboard::Right: case sf::Keyboard::L:
 						switch ((int)selection)
 						{
 							case 0:
@@ -547,7 +548,7 @@ int Recipe::enter()
 							instream.clear();
 						return 0;
 						break;
-					case sf::Keyboard::L:
+					case sf::Keyboard::A:
 						{
 							window.clear();
 
