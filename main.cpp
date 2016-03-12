@@ -2,6 +2,7 @@
 #include <cstdio>
 #include "icon.hpp"
 #include "about.hpp"
+#include "save.hpp"
 #include "economy.hpp"
 #include "recipe.hpp"
 #include "product.hpp"
@@ -34,6 +35,8 @@ void initComchanMolars(Comchan &comchan) {
 	comchan.disaccharidegL = 1590;
 	comchan.monosaccharidegL = 1540;
 
+	comchan.lastLoaded = 0;
+	comchan.currentElement = 0;
 }
 
 int main() {
@@ -57,6 +60,7 @@ int main() {
 	Economy economy(window, font, communicator);
 	Recipe recipe(window, font, communicator, backGround);
 	Product product(window, font, communicator, backGround);
+	Save save(window, font, communicator);
 
 	backy.loadFromFile("data/menu0.png"); banny.loadFromFile("data/menu1.png");
 	backys.setTexture(backy); bannys.setTexture(banny);
@@ -155,7 +159,7 @@ int main() {
 										sf::Image screen = window.capture();
 										sf::Texture screenT; screenT.loadFromImage(screen);
 										screenS.setTexture(screenT);
-										// if (save() == 1)
+										if (save.enter(screenS) == 1)
 											return 0;
 									}
 									break;

@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <vector>
+#include <SFML/Graphics.hpp>
 struct Comchan {
 
 	std::string instream;
@@ -16,6 +19,12 @@ struct Comchan {
 	double enthalpyC;
 	double startMass, finalMass, volumeB;
 
+	std::string name;
+	int lastLoaded;
+	int currentElement;
+
+	std::vector<sf::Text> list, timeList;
+	std::vector<double> timeTable;
 
 	double volumeToAdd;
 };

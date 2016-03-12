@@ -1,3 +1,4 @@
+#include "save.hpp"
 #include "product.hpp"
 #include <SFML/Graphics.hpp>
 #include "globals.hpp"
@@ -443,7 +444,8 @@ int Product::enter() {
 						sf::Texture screenT; screenT.loadFromImage(screen);
 						sf::Sprite screenS;
 						screenS.setTexture(screenT);
-						// save();
+						Save save(window, font, comchan);
+						save.enter(screenS);
 					}
 						break;
 					default: break;

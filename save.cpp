@@ -1,29 +1,19 @@
 #include <SFML/Graphics.hpp>
 #include "globals.hpp"
+#include <iostream>
 #include "save.hpp"
 #include <fstream>
 #include <cstdio>
 #include <string>
 #include <ctime>
 
-extern std::fstream loadList;
-extern double totalVolume, totalDiSugarPerLitre, juiceVolume, juiceMonoSugarPerLitre, juiceDiSugarPerLitre, timeSpan;
-extern double startMass, finalMass, volumeB;
-extern double yeastP, sucroseP, juiceP, waterP, yeastPL,
-		yeastMass, sucroseMass, juiceLitre, waterLitre;
-extern double monosaccharidegL, disaccharidegL, carbondioxidegL, ethanolgL, watergL;
-extern double hydrogenM, carbonM, oxygenM;
-std::string name;
-extern int lastLoaded;
-extern sf::Sprite screenS;
-extern double ethanolEoC, sucroseEoC;
-
 std::string n2s(double);
-void createList();
 
-extern std::vector<sf::Text> list;
-
-Save::Save(sf::RenderWindow &window, const sf::Font &font)
+Save::Save(sf::RenderWindow &window, sf::Font &font, Comchan &comchan)
+:
+	window(window),
+	font(font),
+	comchan(comchan)
 {
 	teller.setFont(font); nameT.setFont(font);
 	teller.setCharacterSize(10); nameT.setCharacterSize(10);
@@ -39,8 +29,120 @@ Save::Save(sf::RenderWindow &window, const sf::Font &font)
 	boxS.setPosition(250,220);
 }
 
-int Save::enter()
+void Save::createList() {
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
+	auto &currentElement = comchan.currentElement;
+	auto &lastLoaded = comchan.lastLoaded;
+	std::fstream loadList;
+	loadList.open("loadList.txt");
+	char temp;
+	bool commaFound = false;
+	std::string information = " ", timeInfo;
+	list.clear(); timeList.clear(); timeTable.clear();
+	list.push_back(sf::Text(" Project Title", font, 10));
+	timeList.push_back(sf::Text("Time Left", font, 10));
+	while (loadList.good())
+	{
+		temp = loadList.get();
+		if (temp == 44)
+		{
+			commaFound = true;
+		}
+		else if (temp != 10)
+		{
+			if (commaFound)
+			{
+				timeInfo.push_back(temp);
+			}
+			else
+				information.push_back(temp);
+		}
+		else
+		{
+			//Push on the stack
+			list.push_back(sf::Text(information, font, 10));
+			//converting to time - left:
+			timeTable.push_back(std::atof(timeInfo.c_str()));
+			int timez = std::atof(timeInfo.c_str()) - (int)std::time(NULL);
+			unsigned int weeks = ((int)timez) / 604800; unsigned int days = ((int)timez - weeks * 604800) / 86400; unsigned int hours = ((int)timez - weeks * 604800 - days * 86400) / 3600; unsigned int minutes = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600) / 60; unsigned int seconds = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600 - minutes * 60);
+			std::string timeLeft = n2s(weeks) + " W " + n2s(days) + " d " + n2s(hours) + " h " + n2s(minutes) + " m " + n2s(seconds) + " s";
+
+			timeList.push_back(sf::Text(timeLeft, font, 10));
+			list[currentElement].setPosition(0, currentElement * 10);
+			timeList[currentElement].setPosition(0, currentElement * 10);
+			currentElement++;
+			information.clear(); information.push_back(' ');
+			timeInfo.clear();
+			commaFound = false;
+		}
+	}
+	if (information.size() >= 1)
+		information.erase(information.size() - 1);
+	if (timeInfo.size() >= 1)
+		timeInfo.erase(timeInfo.size() - 1);
+	list.push_back(sf::Text(information, font, 10));
+	timeList.push_back(sf::Text(timeInfo, font, 10));
+	list[currentElement].setPosition(0, currentElement * 10);
+	timeList[currentElement].setPosition(0, currentElement * 10);
+	information.clear();
+	timeInfo.clear();
+	currentElement = 0;
+	if (lastLoaded >= 1)
+		list[lastLoaded].setColor(sf::Color::Cyan);
+}
+
+int Save::enter(sf::Sprite &screenS)
 {
+	createList();
+	auto &startMass = comchan.startMass;
+	auto &finalMass = comchan.finalMass;
+	auto &volumeB = comchan.volumeB;
+	auto &volumeToAdd = comchan.volumeToAdd;
+	auto &totalVolume = comchan.totalVolume;
+	auto &juiceVolume = comchan.juiceVolume;
+	auto &juiceDiSugarPerLitre = comchan.juiceDiSugarPerLitre;
+	auto &juiceMonoSugarPerLitre = comchan.juiceMonoSugarPerLitre;
+	auto &disaccharideM = comchan.disaccharideM;
+	auto &monosaccharideM = comchan.monosaccharideM;
+	auto &monosaccharidegL = comchan.monosaccharidegL;
+	auto &disaccharidegL = comchan.disaccharidegL;
+	auto &carbondioxideM = comchan.carbondioxideM;
+	auto &carbondioxidegL = comchan.carbondioxidegL;
+	auto &ethanolM = comchan.ethanolM;
+	auto &ethanolgL = comchan.ethanolgL;
+	auto &waterM = comchan.waterM;
+	auto &watergL = comchan.watergL;
+	auto &enthalpyC = comchan.enthalpyC;
+	auto &timeSpan = comchan.timeSpan;
+	auto &yeastPL = comchan.yeastPL;
+	auto &yeastPG = comchan.yeastPG;
+	auto &sucrosePG = comchan.sucrosePG;
+	auto &juicePL = comchan.juicePL;
+	auto &waterPL = comchan.waterPL;
+	auto &totalDiSugarPerLitre = comchan.totalDiSugarPerLitre;
+	auto &instream = comchan.instream;
+	auto &name = comchan.name;
+	auto &lastLoaded = comchan.lastLoaded;
+	auto &sucroseEoC = comchan.sucroseEoC;
+	auto &ethanolEoC = comchan.ethanolEoC;
+	auto &oxygenM = comchan.oxygenM;
+	auto &carbonM = comchan.carbonM;
+	auto &hydrogenM = comchan.hydrogenM;
+	auto &waterLitre = comchan.waterLitre;
+	auto &juiceLitre = comchan.juiceLitre;
+	auto &sucroseMass = comchan.sucroseMass;
+	auto &yeastMass = comchan.yeastMass;
+	auto &waterP = comchan.waterP;
+	auto &juiceP = comchan.juiceP;
+	auto &sucroseP = comchan.sucroseP;
+	auto &yeastP = comchan.yeastP;
+	auto &list = comchan.list;
+	auto &timeTable = comchan.timeTable;
+	auto &timeList = comchan.timeList;
+
+	sf::Event event;
 	if (window.waitEvent(event)); ///In order to skip the "s" shortcut from being added to the writing que.
 	begin:
 	if (window.waitEvent(event))
@@ -65,7 +167,9 @@ int Save::enter()
 							///Entry in the main save (save overview)
 							for (unsigned int i = 1; i < list.size() - 1; i++) //Finder
 							{
-								std::string temporary = static_cast<std::string>(list[i].getString());
+								if (list.size() == 0)
+									break;
+								std::string temporary = list[i].getString();
 								temporary.erase(temporary.begin());
 								if (temporary == std::string(name))
 								{
@@ -78,7 +182,7 @@ int Save::enter()
 							actual << name << "," << (int)(timeSpan + (int)std::time(NULL)) << "\n";
 							actual.close();
 							lastLoaded = list.size() - 1;
-							createList();
+							// createList();
 							alreadyThere = false;
 							alreadyContained: //Skips the above algorithm for saving.
 							//Now the file will be saved, an entry will be added to the global load file.

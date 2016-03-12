@@ -2,12 +2,11 @@
 #include "globals.hpp"
 #include <fstream>
 #include <ctime>
+#include <utility>
 #include <cstdlib>
 #include <string>
 #include <cstdio>
 
-std::fstream loadList;
-std::vector<sf::Text> list;
 std::string n2s(double);
 int lastLoaded = -1;
 
@@ -31,64 +30,65 @@ void compute();
 
 //This will be an overlay-screen, where a snapshot of the menu is taken, and this screen comes on top?
 
-void Load::createList()
+std::pair<std::vector<sf::Text>, std::vector<sf::Text>> createList(sf::Font &font)
 {
-		loadList.open("loadList.txt");
-		char temp;
-		bool commaFound = false;
-		std::string information = " ", timeInfo;
-		list.clear(); timeList.clear(); timeTable.clear();
-		list.push_back(sf::Text(" Project Title", font, 10));
-		timeList.push_back(sf::Text("Time Left", font, 10));
-		while (loadList.good())
+	std::fstream loadList;
+	std::vector<sf::Text> list, timeList;
+	loadList.open("loadList.txt");
+	char temp;
+	bool commaFound = false;
+	std::string information = " ", timeInfo;
+	list.clear(); timeList.clear(); timeTable.clear();
+	list.push_back(sf::Text(" Project Title", font, 10));
+	timeList.push_back(sf::Text("Time Left", font, 10));
+	while (loadList.good())
+	{
+		temp = loadList.get();
+		if (temp == 44)
 		{
-			temp = loadList.get();
-			if (temp == 44)
+			commaFound = true;
+		}
+		else if (temp != 10)
+		{
+			if (commaFound)
 			{
-				commaFound = true;
-			}
-			else if (temp != 10)
-			{
-				if (commaFound)
-				{
-					timeInfo.push_back(temp);
-				}
-				else
-					information.push_back(temp);
+				timeInfo.push_back(temp);
 			}
 			else
-			{
-				//Push on the stack
-				list.push_back(sf::Text(information, font, 10));
-				//converting to time - left:
-				timeTable.push_back(std::atof(timeInfo.c_str()));
-				int timez = std::atof(timeInfo.c_str()) - (int)std::time(NULL);
-				unsigned int weeks = ((int)timez) / 604800; unsigned int days = ((int)timez - weeks * 604800) / 86400; unsigned int hours = ((int)timez - weeks * 604800 - days * 86400) / 3600; unsigned int minutes = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600) / 60; unsigned int seconds = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600 - minutes * 60);
-				std::string timeLeft = n2s(weeks) + " W " + n2s(days) + " d " + n2s(hours) + " h " + n2s(minutes) + " m " + n2s(seconds) + " s";
-
-				timeList.push_back(sf::Text(timeLeft, font, 10));
-				list[currentElement].setPosition(0, currentElement * 10);
-				timeList[currentElement].setPosition(0, currentElement * 10);
-				currentElement++;
-				information.clear(); information.push_back(' ');
-				timeInfo.clear();
-				commaFound = false;
-			}
+				information.push_back(temp);
 		}
-		if (information.size() >= 1)
-			information.erase(information.size() - 1);
-		if (timeInfo.size() >= 1)
-			timeInfo.erase(timeInfo.size() - 1);
-		list.push_back(sf::Text(information, font, 10));
-		timeList.push_back(sf::Text(timeInfo, font, 10));
-		list[currentElement].setPosition(0, currentElement * 10);
-		timeList[currentElement].setPosition(0, currentElement * 10);
-		information.clear();
-		timeInfo.clear();
-		currentElement = 0;
-		if (lastLoaded >= 1)
-			list[lastLoaded].setColor(sf::Color::Cyan);
-		loadList.close();
+		else
+		{
+			//Push on the stack
+			list.push_back(sf::Text(information, font, 10));
+			//converting to time - left:
+			timeTable.push_back(std::atof(timeInfo.c_str()));
+			int timez = std::atof(timeInfo.c_str()) - (int)std::time(NULL);
+			unsigned int weeks = ((int)timez) / 604800; unsigned int days = ((int)timez - weeks * 604800) / 86400; unsigned int hours = ((int)timez - weeks * 604800 - days * 86400) / 3600; unsigned int minutes = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600) / 60; unsigned int seconds = ((int)timez - weeks * 604800 - days * 86400 - hours * 3600 - minutes * 60);
+			std::string timeLeft = n2s(weeks) + " W " + n2s(days) + " d " + n2s(hours) + " h " + n2s(minutes) + " m " + n2s(seconds) + " s";
+
+			timeList.push_back(sf::Text(timeLeft, font, 10));
+			list[currentElement].setPosition(0, currentElement * 10);
+			timeList[currentElement].setPosition(0, currentElement * 10);
+			currentElement++;
+			information.clear(); information.push_back(' ');
+			timeInfo.clear();
+			commaFound = false;
+		}
+	}
+	if (information.size() >= 1)
+		information.erase(information.size() - 1);
+	if (timeInfo.size() >= 1)
+		timeInfo.erase(timeInfo.size() - 1);
+	list.push_back(sf::Text(information, font, 10));
+	timeList.push_back(sf::Text(timeInfo, font, 10));
+	list[currentElement].setPosition(0, currentElement * 10);
+	timeList[currentElement].setPosition(0, currentElement * 10);
+	information.clear();
+	timeInfo.clear();
+	currentElement = 0;
+	if (lastLoaded >= 1)
+		list[lastLoaded].setColor(sf::Color::Cyan);
 }
 
 void Load::updateTimer()
