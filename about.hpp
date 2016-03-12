@@ -10,6 +10,6 @@ class About {
 public:
 
 	About(sf::RenderWindow &window, const sf::Font &font);
-	enter(sf::Sprite &screenS);
+	int enter(sf::Sprite &screenS);
 
 };

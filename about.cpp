@@ -1,7 +1,7 @@
 #include "about.hpp"
 #include <SFML/Graphics.hpp>
 
-void About::About(sf::RenderWindow &window, const sf::Font &font)
+About::About(sf::RenderWindow &window, const sf::Font &font)
 :
 	window(window) {
 		noter.setFont(font); thanks.setFont(font); progry.setFont(font);
